@@ -33,14 +33,14 @@ public class JsonData {
         return jsonData;
     }
 
+    public static JsonData success() {
+        return new JsonData(true);
+    }
+
     public static JsonData fail(String msg) {
         JsonData jsonData = new JsonData(false);
         jsonData.msg = msg;
         return jsonData;
-    }
-
-    public static JsonData success() {
-        return new JsonData(true);
     }
 
     public Map<String, Object> toMap() {

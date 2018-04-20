@@ -5,7 +5,6 @@ import com.lxb.exception.PermissionException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -29,8 +28,8 @@ public class SpringExceptionResolver implements HandlerExceptionResolver {
             }
            else {
                 log.error("unknown json exception url:" + url, e);
-            JsonData result = JsonData.fail(defaultMsg);
-            mv = new ModelAndView("jsonView", result.toMap());
+                JsonData result = JsonData.fail(defaultMsg);
+                mv = new ModelAndView("jsonView", result.toMap());
             }
         } else if (url.endsWith(".page")) { // ask for page，use.page
             log.error("unknown page exception url:" + url, e);

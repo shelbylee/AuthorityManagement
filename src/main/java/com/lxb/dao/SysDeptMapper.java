@@ -2,7 +2,10 @@ package com.lxb.dao;
 
 import com.lxb.model.SysDept;
 
+import java.util.List;
+
 public interface SysDeptMapper {
+
     int deleteByPrimaryKey(Integer id);
 
     int insert(SysDept record);
@@ -14,4 +17,6 @@ public interface SysDeptMapper {
     int updateByPrimaryKeySelective(SysDept record);
 
     int updateByPrimaryKey(SysDept record);
+
+    List<SysDept> getAllDept(); // add getAllDept method
 }
