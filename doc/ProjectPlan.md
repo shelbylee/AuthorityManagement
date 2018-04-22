@@ -10,7 +10,7 @@
 
 - 部门列表（树型结构）
     - 新增、修改、删除部门
-        - 新增部门：上级部门（点击添加）、名称、顺序、备注。保存时需要校验同级下是否有相同名称的部门，不同级别下部门名称是可以相同的
+        - 新增部门：新增部门的上级部门（通过点击添加）、名称、顺序、备注。保存时需要校验同级下是否有相同名称的部门，不同级别下部门名称是可以相同的
         - 修改部门：
         - 删除部门：需要确认下面是否有子部门 or 人员
 
@@ -64,7 +64,7 @@
 
 - Department List (Tree Structure)
     - Add, modify, delete departments
-    - Add department: superior department (click to add), name, sequence, and remarks. When saving, you need to check whether there is a department with the same name under the same level. The department name can be the same under different levels.
+    - Add department: new department's parent department (click to add), name, sequence, and remarks. When saving, you need to check whether there is a department with the same name under the same level. The department name can be the same under different levels.
     - Modify department:
     - Delete department: need to confirm if there is any sub-department or personnel
 
