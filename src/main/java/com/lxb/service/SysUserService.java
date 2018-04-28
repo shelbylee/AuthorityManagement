@@ -67,7 +67,6 @@ public class SysUserService {
                 .username(param.getUsername())
                 .telephone(param.getTelephone())
                 .mail(param.getMail())
-                .password(before.getPassword())
                 .deptId(param.getDeptId())
                 .status(param.getStatus())
                 .remark(param.getRemark()).build();
