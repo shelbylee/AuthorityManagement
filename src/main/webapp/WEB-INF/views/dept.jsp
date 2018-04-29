@@ -283,7 +283,7 @@
                         }
                     },
                     buttons: {
-                        "添加": function (e) {
+                        "修改": function (e) {
                             e.preventDefault();
                             updateDept(false, function (data) {
                                 $("#dialog-dept-form").dialog("close");
