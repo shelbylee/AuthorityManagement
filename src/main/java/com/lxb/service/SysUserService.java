@@ -10,11 +10,9 @@ import com.lxb.param.UserParam;
 import com.lxb.util.BeanValidator;
 import com.lxb.util.MD5Util;
 import com.lxb.util.PasswordUtil;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import javax.validation.constraints.Null;
 import java.util.Date;
 import java.util.List;
 
