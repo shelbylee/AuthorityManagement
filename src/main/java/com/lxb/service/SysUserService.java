@@ -1,6 +1,8 @@
 package com.lxb.service;
 
 import com.google.common.base.Preconditions;
+import com.lxb.bean.PageQuery;
+import com.lxb.bean.PageResult;
 import com.lxb.dao.SysUserMapper;
 import com.lxb.exception.ParamException;
 import com.lxb.model.SysUser;
@@ -8,10 +10,13 @@ import com.lxb.param.UserParam;
 import com.lxb.util.BeanValidator;
 import com.lxb.util.MD5Util;
 import com.lxb.util.PasswordUtil;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.validation.constraints.Null;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class SysUserService {
@@ -84,5 +89,17 @@ public class SysUserService {
 
     public SysUser findByKeyword(String keyword) {
         return sysUserMapper.findByKeyword(keyword);
+    }
+
+    public PageResult<SysUser> getPageByDeptId(int deptId, PageQuery page) {
+        BeanValidator.check(page);
+
+        int count = sysUserMapper.countByDeptId(deptId);
+        if (count > 0) {
+            List<SysUser> list = sysUserMapper.getPageByDeptId(deptId, page);
+            return PageResult.<SysUser>builder().total(count).data(list).build();
+        }
+
+        return PageResult.<SysUser>builder().build();
     }
 }

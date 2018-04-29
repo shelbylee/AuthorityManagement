@@ -1,7 +1,10 @@
 package com.lxb.dao;
 
+import com.lxb.bean.PageQuery;
 import com.lxb.model.SysUser;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface SysUserMapper {
 
@@ -22,4 +25,8 @@ public interface SysUserMapper {
     int countByMail(@Param("mail") String mail, @Param("id") Integer id);
 
     int countByTelephone(@Param("telephone") String telephone, Integer id);
+
+    int countByDeptId(@Param("deptId") int deptId);
+
+    List<SysUser> getPageByDeptId(@Param("deptId") int deptId, @Param("page") PageQuery page);
 }
