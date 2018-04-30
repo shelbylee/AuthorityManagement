@@ -1,6 +1,7 @@
 package com.lxb.service;
 
 import com.google.common.base.Preconditions;
+import com.lxb.common.RequestHolder;
 import com.lxb.dao.SysDeptMapper;
 import com.lxb.exception.ParamException;
 import com.lxb.model.SysDept;
@@ -39,7 +40,7 @@ public class SysDeptService {
 
         dept.setLevel(LevelUtil.calculateLevel(getLevel(param.getParentId()), param.getParentId()));
 
-        dept.setOperator("system"); // TODO:
+        dept.setOperator(RequestHolder.getCurrentUser().getUsername());
         dept.setOperateIp("127.0.0.1"); // TODO:
         dept.setOperateTime(new Date());
 
@@ -70,7 +71,7 @@ public class SysDeptService {
                 .build();
 
         after.setLevel(LevelUtil.calculateLevel(getLevel(param.getParentId()), param.getParentId()));
-        after.setOperator("system-update"); // TODO:
+        after.setOperator(RequestHolder.getCurrentUser().getUsername());
         after.setOperateIp("127.0.0.1"); // TODO:
         after.setOperateTime(new Date());
 

@@ -27,7 +27,7 @@ public class UserController {
         response.sendRedirect(path);
     }
 
-        @RequestMapping("/login.page")
+    @RequestMapping("/login.page")
     public void login(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
         String username = request.getParameter("username");

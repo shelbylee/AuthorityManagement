@@ -3,6 +3,7 @@ package com.lxb.service;
 import com.google.common.base.Preconditions;
 import com.lxb.bean.PageQuery;
 import com.lxb.bean.PageResult;
+import com.lxb.common.RequestHolder;
 import com.lxb.dao.SysUserMapper;
 import com.lxb.exception.ParamException;
 import com.lxb.model.SysUser;
@@ -46,7 +47,7 @@ public class SysUserService {
                 .status(param.getStatus())
                 .remark(param.getRemark()).build();
 
-        user.setOperator("system"); // TODO:
+        user.setOperator(RequestHolder.getCurrentUser().getUsername());
         user.setOperateIp("127.0.0.1"); // TODO:
         user.setOperateTime(new Date());
 
@@ -73,6 +74,10 @@ public class SysUserService {
                 .deptId(param.getDeptId())
                 .status(param.getStatus())
                 .remark(param.getRemark()).build();
+
+        after.setOperator(RequestHolder.getCurrentUser().getUsername());
+        after.setOperateIp("127.0.0.1"); // TODO:
+        after.setOperateTime(new Date());
 
         sysUserMapper.updateByPrimaryKeySelective(after);
     }
