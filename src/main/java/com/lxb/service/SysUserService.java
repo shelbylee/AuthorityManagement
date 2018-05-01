@@ -9,6 +9,7 @@ import com.lxb.exception.ParamException;
 import com.lxb.model.SysUser;
 import com.lxb.param.UserParam;
 import com.lxb.util.BeanValidator;
+import com.lxb.util.IpUtil;
 import com.lxb.util.MD5Util;
 import com.lxb.util.PasswordUtil;
 import org.springframework.stereotype.Service;
@@ -48,7 +49,7 @@ public class SysUserService {
                 .remark(param.getRemark()).build();
 
         user.setOperator(RequestHolder.getCurrentUser().getUsername());
-        user.setOperateIp("127.0.0.1"); // TODO:
+        user.setOperateIp(IpUtil.getRemoteIp(RequestHolder.getCurrentRequest()));
         user.setOperateTime(new Date());
 
         // TODO: sendEmail
@@ -76,7 +77,7 @@ public class SysUserService {
                 .remark(param.getRemark()).build();
 
         after.setOperator(RequestHolder.getCurrentUser().getUsername());
-        after.setOperateIp("127.0.0.1"); // TODO:
+        after.setOperateIp(IpUtil.getRemoteIp(RequestHolder.getCurrentRequest()));
         after.setOperateTime(new Date());
 
         sysUserMapper.updateByPrimaryKeySelective(after);
