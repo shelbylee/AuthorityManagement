@@ -46,34 +46,31 @@ public class SysTreeService {
                 rootList.add(dto);
             }
         }
-        // 按照seq从小到大排序
+        // asc sort by Seq
         Collections.sort(rootList, new Comparator<DeptLevelDto>() {
             public int compare(DeptLevelDto o1, DeptLevelDto o2) {
                 return o1.getSeq() - o2.getSeq();
             }
         });
-        // 递归生成树
+        // build a tree recursively
         transformDeptTree(rootList, LevelUtil.ROOT, levelDeptMap);
         return rootList;
     }
 
-    // level:0, 0, all 0->0.1,0.2
-    // level:0.1
-    // level:0.2
     public void transformDeptTree(List<DeptLevelDto> deptLevelList, String level, Multimap<String, DeptLevelDto> levelDeptMap) {
         for (int i = 0; i < deptLevelList.size(); i++) {
-            // 遍历该层的每个元素
+            // traverse
             DeptLevelDto deptLevelDto = deptLevelList.get(i);
-            // 处理当前层级的数据
+            // calculate next level from current level
             String nextLevel = LevelUtil.calculateLevel(level, deptLevelDto.getId());
-            // 处理下一层
+            // get next level
             List<DeptLevelDto> tempDeptList = (List<DeptLevelDto>) levelDeptMap.get(nextLevel);
             if (CollectionUtils.isNotEmpty(tempDeptList)) {
-                // 排序
+                // sort by Seq
                 Collections.sort(tempDeptList, deptSeqComparator);
-                // 设置下一层部门
+                // set next dept
                 deptLevelDto.setDeptLevelDtoList(tempDeptList);
-                // 进入到下一层处理
+                // recursive
                 transformDeptTree(tempDeptList, nextLevel, levelDeptMap);
             }
         }
@@ -85,81 +82,3 @@ public class SysTreeService {
         }
     };
 }
-
-
-/*@Service
-public class SysTreeService {
-
-    @Resource
-    private SysDeptMapper sysDeptMapper;
-
-    public List<DeptLevelDto> deptTree() {
-        List<SysDept> deptList = sysDeptMapper.getAllDept();
-
-        List<DeptLevelDto> dtoList = Lists.newArrayList();
-        for (SysDept dept : deptList) {
-            DeptLevelDto dto = DeptLevelDto.adapt(dept);
-            dtoList.add(dto);
-        }
-
-        return deptListToTree(dtoList);
-    }
-
-    public List<DeptLevelDto> deptListToTree(List<DeptLevelDto> dtoList) {
-        if (CollectionUtils.isEmpty(dtoList)) {
-            return Lists.newArrayList();
-        }
-
-        Multimap<String, DeptLevelDto> levelDtoMultimap = ArrayListMultimap.create();
-        List<DeptLevelDto> rootList = Lists.newArrayList();
-
-        for (DeptLevelDto dto : dtoList) {
-            levelDtoMultimap.put(dto.getLevel(), dto);
-
-            if (LevelUtil.ROOT.equals(dto.getLevel())) {
-                rootList.add(dto);
-            }
-        }
-
-        // asc sort by Seq
-        Collections.sort(rootList, new Comparator<DeptLevelDto>() {
-            public int compare(DeptLevelDto o1, DeptLevelDto o2) {
-                return o1.getSeq() - o2.getSeq();
-            }
-        });
-
-        // build a tree recursively
-        transformDeptTree(rootList, LevelUtil.ROOT, levelDtoMultimap);
-
-        return rootList;
-    }
-
-    public void transformDeptTree(List<DeptLevelDto> deptLevelDtoList,
-                                  String level,
-                                  Multimap<String, DeptLevelDto> levelDtoMultimap) {
-
-        for (int i = 0; i < deptLevelDtoList.size(); i++) {
-            // traverse
-            DeptLevelDto deptLevelDto = deptLevelDtoList.get(i);
-            // calculate next level from current level
-            String nextLevel = LevelUtil.calculateLevel(level, deptLevelDto.getId());
-            // get next level
-            List<DeptLevelDto> tmpDeptList = (List<DeptLevelDto>)levelDtoMultimap.get(nextLevel);
-
-            if (CollectionUtils.isNotEmpty(tmpDeptList)) {
-                // sort by Seq
-                Collections.sort(tmpDeptList, deptSeqComparator);
-                // set next dept
-                deptLevelDto.setDeptLevelDtoList(tmpDeptList);
-                // recursive
-                transformDeptTree(tmpDeptList, nextLevel, levelDtoMultimap);
-            }
-        }
-    }
-
-    public Comparator<DeptLevelDto> deptSeqComparator = new Comparator<DeptLevelDto>() {
-        public int compare(DeptLevelDto o1, DeptLevelDto o2) {
-            return o1.getSeq() - o2.getSeq();
-        }
-    };
-}*/
