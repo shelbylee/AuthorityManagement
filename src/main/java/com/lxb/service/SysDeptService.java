@@ -7,6 +7,7 @@ import com.lxb.exception.ParamException;
 import com.lxb.model.SysDept;
 import com.lxb.param.DeptParam;
 import com.lxb.util.BeanValidator;
+import com.lxb.util.IpUtil;
 import com.lxb.util.LevelUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
@@ -41,7 +42,7 @@ public class SysDeptService {
         dept.setLevel(LevelUtil.calculateLevel(getLevel(param.getParentId()), param.getParentId()));
 
         dept.setOperator(RequestHolder.getCurrentUser().getUsername());
-        dept.setOperateIp("127.0.0.1"); // TODO:
+        dept.setOperateIp(IpUtil.getRemoteIp(RequestHolder.getCurrentRequest()));
         dept.setOperateTime(new Date());
 
         sysDeptMapper.insertSelective(dept);
@@ -72,7 +73,7 @@ public class SysDeptService {
 
         after.setLevel(LevelUtil.calculateLevel(getLevel(param.getParentId()), param.getParentId()));
         after.setOperator(RequestHolder.getCurrentUser().getUsername());
-        after.setOperateIp("127.0.0.1"); // TODO:
+        after.setOperateIp(IpUtil.getRemoteIp(RequestHolder.getCurrentRequest()));
         after.setOperateTime(new Date());
 
         updateWithChild(before, after);
@@ -86,7 +87,7 @@ public class SysDeptService {
      * @param after the dept info after updating
      */
     @Transactional
-    public void updateWithChild(SysDept before, SysDept after) {
+     void updateWithChild(SysDept before, SysDept after) {
 
         String newLevelPrefix = after.getLevel();
         String oldLevelPrefix = before.getLevel();
