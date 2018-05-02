@@ -15,7 +15,7 @@ public class PageQuery {
     @Getter
     @Setter
     @Min(value = 1, message = "每页展示的数量不合法")
-    private int pageSize = 1;
+    private int pageSize = 10;
 
     @Setter
     private int offset;
