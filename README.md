@@ -1,2 +1,2 @@
-# AuthorityManagement
-An Authority Management System based on RBAC
+# PermissionManagement
+A Permission Management System based on RBAC
