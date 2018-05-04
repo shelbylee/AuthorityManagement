@@ -3,8 +3,10 @@ package com.lxb.controller;
 import com.lxb.common.JsonData;
 import com.lxb.param.RoleParam;
 import com.lxb.service.SysRoleService;
+import com.lxb.service.SysTreeService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -16,6 +18,8 @@ public class SysRoleController {
 
     @Resource
     private SysRoleService sysRoleService;
+    @Resource
+    private SysTreeService sysTreeService;
 
     @RequestMapping("role.page")
     public ModelAndView page() {
@@ -41,4 +45,11 @@ public class SysRoleController {
     public JsonData list() {
         return JsonData.success(sysRoleService.getAll());
     }
+
+    @RequestMapping("roleTree.json")
+    @ResponseBody
+    public JsonData roleTree(@RequestParam("roleId") int roleId) {
+        return JsonData.success(sysTreeService.roleTree(roleId));
+    }
+
 }
