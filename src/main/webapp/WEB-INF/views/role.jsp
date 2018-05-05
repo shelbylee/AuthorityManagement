@@ -144,6 +144,10 @@
 
         var roleListTemplate = $("#roleListTemplate").html();
         Mustache.parse(roleListTemplate);
+        var selectedUsersTemplate = $("#selectedUsersTemplate").html();
+        Mustache.parse(selectedUsersTemplate);
+        var unSelectedUsersTemplate = $("#unSelectedUsersTemplate").html();
+        Mustache.parse(unSelectedUsersTemplate);
 
         loadRoleList();
 
@@ -410,6 +414,52 @@
                 }
             })
         }
+
+        $("#roleTab a[data-toggle='tab']").on("shown.bs.tab", function (e) {
+            if (lastRoleId == -1) {
+                showMessage("加载角色关系", "请先在左侧选择操作的角色", false);
+                return;
+            }
+
+            if (e.target.getAttribute("href") == '#roleAclTab') {
+                selectFirstTab = true;
+                loadRoleAcl(lastRoleId);
+            } else {
+                selectFirstTab = false;
+                loadRoleUser(lastRoleId);
+            }
+        });
+
+        function loadRoleUser(selectedRoleId) {
+            $.ajax({
+                url: "/sys/role/users.json",
+                data: {
+                    roleId: selectedRoleId
+                },
+                type: 'POST',
+                success: function (result) {
+                    if (result.ret) {
+                        var renderedSelect = Mustache.render(selectedUsersTemplate, {userList: result.data.selected});
+                        var renderedUnSelect = Mustache.render(unSelectedUsersTemplate, {userList: result.data.unselected});
+                        $("#roleUserList").html(renderedSelect + renderedUnSelect);
+
+                        if (!hasMultiSelect) {
+                            $('select[name="roleUserList"]').bootstrapDualListbox({
+                                showFilterInputs: false,
+                                moveOnSelect: false,
+                                infoText: false
+                            });
+                            hasMultiSelect = true;
+                        } else {
+                            $('select[name="roleUserList"]').bootstrapDualListbox('refresh', true);
+                        }
+                    } else {
+                        showMessage("加载角色用户数据", result.msg, false);
+                    }
+                }
+            })
+        }
+
     });
 </script>
 </body>
