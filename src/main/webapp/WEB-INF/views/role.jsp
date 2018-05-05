@@ -252,8 +252,83 @@
             }
         }
 
-        function loadRoleAcl(roleId) {
+        function loadRoleAcl(selectedRoleId) {
 
+            if (selectedRoleId == -1) {
+                return;
+            }
+            $.ajax({
+                url: "/sys/role/roleTree.json",
+                data: {
+                    roleId: selectedRoleId
+                },
+                type: 'POST',
+                success: function (result) {
+                    if (result.ret) {
+                        renderRoleTree(result.data);
+                    } else {
+                        showMessage("加载角色权限数据", result.msg, false);
+                    }
+                }
+            });
+        }
+
+        function renderRoleTree(aclModuleList) {
+            zTreeObj = [];
+            recrusivePrepareTreeData(aclModuleList);
+            for (var key in nodeMap) {
+                zTreeObj.push(nodeMap[key]);
+            }
+            $.fn.zTree.init($("#roleAclTree"), setting, zTreeObj);
+        }
+
+        function recrusivePrepareTreeData(aclModuleList) {
+
+            // prepare nodeMap
+            if (aclModuleList && aclModuleList.length > 0) {
+                $(aclModuleList).each(function (i, aclModule) {
+
+                    var hasChecked = false;
+                    if (aclModule.aclList && aclModule.aclList.length > 0) {
+                        $(aclModule.aclList).each(function (i, acl) {
+                            zTreeObj.push({
+                                id: aclPrefix + acl.id,
+                                pId: modulePrefix + acl.aclModuleId,
+                                name: acl.name + ((acl.type == 1) ? '(菜单)' : ''),
+                                chkDiabled: !acl.hasAcl,
+                                checked: acl.checked,
+                                dataId:acl.id
+                            });
+                            if (acl.checked) {
+                                hasChecked = true;
+                            }
+                        })
+                    }
+
+                    if ((aclModule.aclModuleList && aclModule.aclModuleList.length > 0)
+                        && (aclModule.aclList && aclModule.aclList.length > 0)) {
+                        nodeMap[modulePrefix + aclModule.id] = {
+                            id: modulePrefix + aclModule.id,
+                            pId: modulePrefix + aclModule.parentId,
+                            name: aclModule.name,
+                            open: hasChecked
+                        };
+                        var tempAclModule = nodeMap[modulePrefix + aclModule.id];
+                        while (hasChecked && tempAclModule) {
+                            if (tempAclModule) {
+                                nodeMap[tempAclModule.id] = {
+                                    id: tempAclModule.id,
+                                    pId: tempAclModule.pId,
+                                    name: tempAclModule.name,
+                                    open: true
+                                }
+                            }
+                            tempAclModule = nodeMap[tempAclModule.pId];
+                        }
+                    }
+                    recrusivePrepareTreeData(aclModule.aclModuleList);
+                });
+            }
         }
 
         $(".role-add").click(function () {
