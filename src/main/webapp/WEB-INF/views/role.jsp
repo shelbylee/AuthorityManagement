@@ -147,6 +147,35 @@
 
         loadRoleList();
 
+        <!-- zTree -->
+        var zTreeObj = [];
+        var modulePrefix = 'm_';
+        var aclPrefix = 'a_';
+        var nodeMap = {};
+
+        var setting = {
+            check: {
+                enable: true,
+                chkDisabledInherit: true,
+                chkboxType: {"Y": "ps", "N": "ps"}, //auto check parent node child node
+                autoCheckTrigger: true
+            },
+            data: {
+                simpleData: {
+                    enable: true,
+                    rootPId: 0
+                }
+            },
+            callback: {
+                onClick: onClickTreeNode
+            }
+        };
+
+        function onClickTreeNode(e, treeId, treeNode) {
+            var zTree = $.fn.zTree.getZTreeObj("roleAclTree");
+            zTree.expandNode(treeNode);
+        }
+
         function loadRoleList() {
             $.ajax({
                 url: "/sys/role/list.json",
@@ -223,7 +252,7 @@
             }
         }
 
-        function loadRoleAcl() {
+        function loadRoleAcl(roleId) {
 
         }
 
