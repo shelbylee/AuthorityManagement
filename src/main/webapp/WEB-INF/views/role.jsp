@@ -193,6 +193,7 @@
                 }
             });
         }
+
         function bindRoleClick() {
             $(".role-edit").click(function (e) {
                 e.preventDefault();
@@ -273,6 +274,18 @@
             });
         }
 
+        function getTreeSelectedId() {
+            var treeObj = $.fn.zTree.getZTreeObj("roleAclTree");
+            var nodes = treeObj.getCheckedNodes(true);
+            var v = "";
+            for(var i = 0; i < nodes.length; i++) {
+                if(nodes[i].id.startsWith(aclPrefix)) {
+                    v += "," + nodes[i].dataId;
+                }
+            }
+            return v.length > 0 ? v.substring(1): v;
+        }
+
         function renderRoleTree(aclModuleList) {
             zTreeObj = [];
             recrusivePrepareTreeData(aclModuleList);
@@ -287,8 +300,8 @@
             // prepare nodeMap
             if (aclModuleList && aclModuleList.length > 0) {
                 $(aclModuleList).each(function (i, aclModule) {
-
                     var hasChecked = false;
+
                     if (aclModule.aclList && aclModule.aclList.length > 0) {
                         $(aclModule.aclList).each(function (i, acl) {
                             zTreeObj.push({
@@ -302,11 +315,11 @@
                             if (acl.checked) {
                                 hasChecked = true;
                             }
-                        })
+                        });
                     }
 
                     if ((aclModule.aclModuleList && aclModule.aclModuleList.length > 0)
-                        && (aclModule.aclList && aclModule.aclList.length > 0)) {
+                        || (aclModule.aclList && aclModule.aclList.length > 0)) {
                         nodeMap[modulePrefix + aclModule.id] = {
                             id: modulePrefix + aclModule.id,
                             pId: modulePrefix + aclModule.parentId,
@@ -353,6 +366,29 @@
                     }
                 }
             })
+        });
+
+        $(".saveRoleAcl").click(function (e) {
+            e.preventDefault();
+            if (lastRoleId == -1) {
+                showMessage("保存角色与权限点的关系", "请现在左侧选择需要操作的角色", false);
+                return;
+            }
+            $.ajax({
+                url: "/sys/role/changeAcls.json",
+                data: {
+                    roleId: lastRoleId,
+                    aclIds: getTreeSelectedId()
+                },
+                type: 'POST',
+                success: function (result) {
+                    if (result.ret) {
+                        showMessage("保存角色与权限点的关系", "操作成功", false);
+                    } else {
+                        showMessage("保存角色与权限点的关系", result.msg, false);
+                    }
+                }
+            });
         });
 
         function updateRole(isCreate, successCallback, failCallback) {

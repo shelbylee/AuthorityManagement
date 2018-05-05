@@ -38,12 +38,10 @@ public class SysCoreService {
      * @return a list of permission
      */
     public List<SysAcl> getRoleAclList(int roleId) {
-
         List<Integer> aclIdList = sysRoleAclMapper.getAclIdListByRoleIdList(Lists.<Integer>newArrayList(roleId));
         if (CollectionUtils.isEmpty(aclIdList)) {
             return Lists.newArrayList();
         }
-
         return sysAclMapper.getByIdList(aclIdList);
     }
 

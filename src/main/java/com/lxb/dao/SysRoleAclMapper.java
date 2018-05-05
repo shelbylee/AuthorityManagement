@@ -19,4 +19,9 @@ public interface SysRoleAclMapper {
     int updateByPrimaryKey(SysRoleAcl record);
 
     List<Integer> getAclIdListByRoleIdList(@Param("roleIdList") List<Integer> roleIdList);
+
+    // TODO:
+    void deleteByRoleId(@Param("roleId") int roleId);
+
+    void batchInsert(@Param("roleAclList") List<SysRoleAcl> roleAclList);
 }
