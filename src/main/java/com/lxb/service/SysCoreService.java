@@ -1,12 +1,17 @@
 package com.lxb.service;
 
 import com.google.common.collect.Lists;
+import com.lxb.bean.CacheKeyConstants;
 import com.lxb.common.RequestHolder;
 import com.lxb.dao.SysAclMapper;
 import com.lxb.dao.SysRoleAclMapper;
 import com.lxb.dao.SysRoleUserMapper;
 import com.lxb.model.SysAcl;
+import com.lxb.util.JsonMapper;
+import com.lxb.util.StringUtil;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.codehaus.jackson.type.TypeReference;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -23,6 +28,8 @@ public class SysCoreService {
     private SysRoleUserMapper sysRoleUserMapper;
     @Resource
     private SysRoleAclMapper sysRoleAclMapper;
+    @Resource
+    private SysCacheService sysCacheService;
 
     /**
      * Get permissions of the current user
@@ -102,7 +109,7 @@ public class SysCoreService {
             return true;
         }
 
-        List<SysAcl> userAclList = getCurrentUserAclList();
+        List<SysAcl> userAclList = getCurrentUserAclListFromCache();
         Set<Integer> userAclIdSet = userAclList.stream().map(acl -> acl.getId()).collect(Collectors.toSet());
 
         // if this url has valid acl
@@ -125,5 +132,21 @@ public class SysCoreService {
         }
         return false;*/
         return !hasValidAcl;
+    }
+
+    public List<SysAcl> getCurrentUserAclListFromCache() {
+
+        int userId = RequestHolder.getCurrentUser().getId();
+        String cacheValue = sysCacheService.getFromCache(CacheKeyConstants.USER_ACLS, String.valueOf(userId));
+
+        if (StringUtils.isBlank(cacheValue)) {
+            List<SysAcl> aclList = getCurrentUserAclList();
+            if (CollectionUtils.isNotEmpty(aclList)) {
+                sysCacheService.saveCache(JsonMapper.obj2String(aclList), 600, CacheKeyConstants.USER_ACLS, String.valueOf(userId));
+            }
+            return aclList;
+        }
+        return JsonMapper.string2Obj(cacheValue, new TypeReference<List<SysAcl>>() {
+        });
     }
 }

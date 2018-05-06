@@ -19,6 +19,8 @@
         </property>
     </bean>
 
+    <import resource="redis.xml"/>
+
     <bean id="datasource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
         <property name="driverClassName" value="${db.driverClassName}"/>
         <property name="url" value="${db.url}"/>
