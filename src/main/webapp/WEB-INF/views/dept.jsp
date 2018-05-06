@@ -418,7 +418,29 @@
                 }
             });
         });
+
         function bindUserClick() {
+
+            $(".user-acl").click(function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                var userId = $(this).attr("data-id");
+
+                $.ajax({
+                    url: "/sys/user/acls.json",
+                    data: {
+                        userId: userId
+                    },
+                    success: function (result) {
+                        if (result.ret) {
+                            console.log(result);
+                        } else {
+                            showMessage("获取用户权限数据", result.msg, false);
+                        }
+                    }
+                })
+            });
+
             $(".user-edit").click(function(e) {
                 e.preventDefault();
                 e.stopPropagation();

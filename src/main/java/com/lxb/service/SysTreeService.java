@@ -32,6 +32,21 @@ public class SysTreeService {
     @Resource
     private SysCoreService sysCoreService;
 
+    public List<AclModuleLevelDto> userAclTree(int userId) {
+
+        List<SysAcl> userAclList = sysCoreService.getRoleAclList(userId);
+        List<AclDto> aclDtoList = Lists.newArrayList();
+
+        for (SysAcl acl : userAclList) {
+            AclDto dto = AclDto.adapt(acl);
+            dto.setHasAcl(true);
+            dto.setChecked(true);
+            aclDtoList.add(dto);
+        }
+
+        return aclListToTree(aclDtoList);
+    }
+
     public List<AclModuleLevelDto> roleTree(int roleId) {
 
         // get permissions of the current user
