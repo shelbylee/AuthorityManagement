@@ -26,6 +26,8 @@ public class SysRoleUserService {
     private SysRoleUserMapper sysRoleUserMapper;
     @Resource
     private SysUserMapper sysUserMapper;
+    @Resource
+    private SysLogService sysLogService;
 
     public List<SysUser> getListByRoleId(int roleId) {
 
@@ -49,6 +51,7 @@ public class SysRoleUserService {
             }
         }
         updateRoleUsers(roleId, userIdList);
+        sysLogService.saveRoleUserLog(roleId, originUserIdList, userIdList);
     }
 
     @Transactional

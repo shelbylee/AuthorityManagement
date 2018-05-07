@@ -25,6 +25,8 @@ public class SysAclModuleService {
     private SysAclModuleMapper sysAclModuleMapper;
     @Resource
     private SysAclMapper sysAclMapper;
+    @Resource
+    private SysLogService sysLogService;
 
     public void save(AclModuleParam param) {
 
@@ -48,6 +50,7 @@ public class SysAclModuleService {
         aclModule.setOperateTime(new Date());
 
         sysAclModuleMapper.insertSelective(aclModule);
+        sysLogService.saveAclModuleLog(null, aclModule);
     }
 
     public void update(AclModuleParam param) {
@@ -76,6 +79,7 @@ public class SysAclModuleService {
         after.setOperateTime(new Date());
 
         updateWithChild(before, after);
+        sysLogService.saveAclModuleLog(before, after);
     }
 
     /**

@@ -20,6 +20,8 @@ public class SysRoleAclService {
 
     @Resource
     private SysRoleAclMapper sysRoleAclMapper;
+    @Resource
+    private SysLogService sysLogService;
 
     public void changeRoleAcls(Integer roleId, List<Integer> aclIdList) {
         List<Integer> originAclIdList = sysRoleAclMapper.getAclIdListByRoleIdList(Lists.newArrayList(roleId));
@@ -32,6 +34,7 @@ public class SysRoleAclService {
             }
         }
         updateRoleAcls(roleId, aclIdList);
+        sysLogService.saveRoleAclLog(roleId, originAclIdList, aclIdList);
     }
 
     @Transactional
