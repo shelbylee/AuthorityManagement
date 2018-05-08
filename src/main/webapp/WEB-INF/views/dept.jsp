@@ -331,7 +331,7 @@
         function loadUserList(deptId) {
             var pageSize = $("#pageSize").val();
             var url = "/sys/user/page.json?deptId=" + deptId;
-            var pageNo = $("#userPage.pageNo").val() || 1;
+            var pageNo = $("#userPage .pageNo").val() || 1;
             $.ajax({
                 url : url,
                 data: {
@@ -377,7 +377,7 @@
                     $("#userList").html('');
                 }
                 var pageSize = $("#pageSize").val();
-                var pageNo = $("#userPage.pageNo").val() || 1;
+                var pageNo = $("#userPage .pageNo").val() || 1;
 
                 renderPage(url,
                     result.data.total,
