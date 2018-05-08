@@ -88,8 +88,9 @@
             </div>
         </div>
     </div>
+</div>
 
-    <script id="logListTemplate" type="x-tmpl-mustache">
+<script id="logListTemplate" type="x-tmpl-mustache">
 {{#logList}}
 <tr role="row" class="config odd" data-id="{{id}}"><!--even -->
     <td>{{operator}}</td>
@@ -123,7 +124,7 @@
 
             function loadLogList() {
                 var pageSize = $("#pageSize").val();
-                var pageNo = $("#logPage .pageNo").val() || 1;
+                var pageNo = $("#logPage.pageNo").val() || 1;
                 var url = "/sys/log/page.json";
                 var beforeSeg = $("#search-before").val();
                 var afterSeg = $("#search-after").val();
