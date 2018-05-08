@@ -331,7 +331,7 @@
         function loadUserList(deptId) {
             var pageSize = $("#pageSize").val();
             var url = "/sys/user/page.json?deptId=" + deptId;
-            var pageNo = $("#userPage .pageNo").val() || 1;
+            var pageNo = $("#userPage.pageNo").val() || 1;
             $.ajax({
                 url : url,
                 data: {
@@ -360,7 +360,7 @@
                                 var status = render(text);
                                 if (status == '有效') {
                                     return "<span class='label label-sm label-success'>有效</span>";
-                                } else if(status == '无效') {
+                                } else if (status == '无效') {
                                     return "<span class='label label-sm label-warning'>无效</span>";
                                 } else {
                                     return "<span class='label'>删除</span>";
@@ -377,7 +377,7 @@
                     $("#userList").html('');
                 }
                 var pageSize = $("#pageSize").val();
-                var pageNo = $("#userPage .pageNo").val() || 1;
+                var pageNo = $("#userPage.pageNo").val() || 1;
 
                 renderPage(url,
                     result.data.total,

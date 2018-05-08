@@ -36,6 +36,16 @@
     var paginateTemplate = $("#paginateTemplate").html();
     Mustache.parse(paginateTemplate);
 
+    /**
+     * Render page
+     * @param url Request url
+     * @param total Total pages which satisfy conditions
+     * @param pageNo Current page count
+     * @param pageSize Lines per page
+     * @param currentSize The returned lines in current page
+     * @param idElement The element which needs to put
+     * @param callback a callback method
+     */
     function renderPage(url, total, pageNo, pageSize, currentSize, idElement, callback) {
 
         var maxPageNo = Math.ceil(total / pageSize);
@@ -47,7 +57,7 @@
             total: total,
             pageNo: pageNo,
             maxPageNo: maxPageNo,
-            nextPageNo: pageNo >= maxPageNo ? maxPageNo : pageNo + 1,
+            nextPageNo: pageNo >= maxPageNo ? maxPageNo : (pageNo + 1),
             beforePageNo: pageNo == 1 ? 1 : (pageNo - 1),
             firstUrl: (pageNo == 1) ? '' : (url + paramStartChar + "pageNo=1&pageSize=" + pageSize),
             beforeUrl: (pageNo == 1) ? '' : (url + paramStartChar + "pageNo=" + (pageNo - 1) + "&pageSize=" + pageSize),
@@ -59,7 +69,7 @@
 
         $(".page-action").click(function (e) {
             e.preventDefault();
-            $("#" + idElement + ".pageNo").val($(this).attr("data-target"));
+            $("#" + idElement + " .pageNo").val($(this).attr("data-target"));
             var targetUrl = $(this).attr("data-url");
             if (targetUrl != '') {
                 $.ajax({
