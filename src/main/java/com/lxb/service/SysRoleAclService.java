@@ -2,10 +2,14 @@ package com.lxb.service;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.lxb.bean.LogType;
 import com.lxb.common.RequestHolder;
+import com.lxb.dao.SysLogMapper;
 import com.lxb.dao.SysRoleAclMapper;
+import com.lxb.model.SysLogWithBLOBs;
 import com.lxb.model.SysRoleAcl;
 import com.lxb.util.IpUtil;
+import com.lxb.util.JsonMapper;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,9 +25,10 @@ public class SysRoleAclService {
     @Resource
     private SysRoleAclMapper sysRoleAclMapper;
     @Resource
-    private SysLogService sysLogService;
+    private SysLogMapper sysLogMapper;
 
     public void changeRoleAcls(Integer roleId, List<Integer> aclIdList) {
+
         List<Integer> originAclIdList = sysRoleAclMapper.getAclIdListByRoleIdList(Lists.newArrayList(roleId));
         if (originAclIdList.size() == aclIdList.size()) {
             Set<Integer> originAclIdSet = Sets.newHashSet(originAclIdList);
@@ -34,18 +39,18 @@ public class SysRoleAclService {
             }
         }
         updateRoleAcls(roleId, aclIdList);
-        sysLogService.saveRoleAclLog(roleId, originAclIdList, aclIdList);
+        saveRoleAclLog(roleId, originAclIdList, aclIdList);
     }
 
     @Transactional
     public void updateRoleAcls(int roleId, List<Integer> aclIdList) {
-        sysRoleAclMapper.deleteByRoleId(roleId);
 
+        sysRoleAclMapper.deleteByRoleId(roleId);
         if (CollectionUtils.isEmpty(aclIdList)) {
             return;
         }
-
         List<SysRoleAcl> roleAclList = Lists.newArrayList();
+
         for (Integer aclId : aclIdList) {
             SysRoleAcl roleAcl = SysRoleAcl.builder()
                     .roleId(roleId)
@@ -59,4 +64,27 @@ public class SysRoleAclService {
 
         sysRoleAclMapper.batchInsert(roleAclList);
     }
+
+    /**
+     * To save role_acl log, including adding, editing and deleting.
+     * @param roleId role id
+     * @param before the info before updating, may be null
+     * @param after the info after updating, may be null
+     */
+    private void saveRoleAclLog(int roleId, List<Integer> before, List<Integer> after) {
+
+        SysLogWithBLOBs sysLog = new SysLogWithBLOBs();
+
+        sysLog.setType(LogType.TYPE_ROLE_ACL);
+        sysLog.setTargetId(roleId);
+        sysLog.setOldValue(before == null ? "" : JsonMapper.obj2String(before));
+        sysLog.setNewValue(after == null ? "" : JsonMapper.obj2String(after));
+        sysLog.setOperator(RequestHolder.getCurrentUser().getUsername());
+        sysLog.setOperateIp(IpUtil.getRemoteIp(RequestHolder.getCurrentRequest()));
+        sysLog.setOperateTime(new Date());
+        sysLog.setStatus(1);
+
+        sysLogMapper.insertSelective(sysLog);
+    }
+
 }

@@ -2,14 +2,18 @@ package com.lxb.service;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.lxb.bean.LogType;
 import com.lxb.common.RequestHolder;
+import com.lxb.dao.SysLogMapper;
 import com.lxb.dao.SysRoleAclMapper;
 import com.lxb.dao.SysRoleUserMapper;
 import com.lxb.dao.SysUserMapper;
+import com.lxb.model.SysLogWithBLOBs;
 import com.lxb.model.SysRoleAcl;
 import com.lxb.model.SysRoleUser;
 import com.lxb.model.SysUser;
 import com.lxb.util.IpUtil;
+import com.lxb.util.JsonMapper;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,20 +31,19 @@ public class SysRoleUserService {
     @Resource
     private SysUserMapper sysUserMapper;
     @Resource
-    private SysLogService sysLogService;
+    private SysLogMapper sysLogMapper;
 
     public List<SysUser> getListByRoleId(int roleId) {
 
         List<Integer> userIdList = sysRoleUserMapper.getUserIdListByRoleId(roleId);
-
         if (CollectionUtils.isEmpty(userIdList)) {
             return Lists.newArrayList();
         }
-
         return sysUserMapper.getByIdList(userIdList);
     }
 
     public void changeRoleUsers(int roleId, List<Integer> userIdList) {
+
         List<Integer> originUserIdList = sysRoleUserMapper.getUserIdListByRoleId(roleId);
         if (originUserIdList.size() == userIdList.size()) {
             Set<Integer> originUserIdSet = Sets.newHashSet(originUserIdList);
@@ -51,17 +54,18 @@ public class SysRoleUserService {
             }
         }
         updateRoleUsers(roleId, userIdList);
-        sysLogService.saveRoleUserLog(roleId, originUserIdList, userIdList);
+        saveRoleUserLog(roleId, originUserIdList, userIdList);
     }
 
     @Transactional
     public void updateRoleUsers(int roleId, List<Integer> userIdList) {
-        sysRoleUserMapper.deleteByRoleId(roleId);
 
+        sysRoleUserMapper.deleteByRoleId(roleId);
         if (CollectionUtils.isEmpty(userIdList)) {
             return;
         }
         List<SysRoleUser> roleUserList = Lists.newArrayList();
+
         for (Integer userId : userIdList) {
             SysRoleUser roleUser = SysRoleUser.builder().roleId(roleId).userId(userId).operator(RequestHolder.getCurrentUser().getUsername())
                     .operateIp(IpUtil.getRemoteIp(RequestHolder.getCurrentRequest())).operateTime(new Date()).build();
@@ -69,4 +73,27 @@ public class SysRoleUserService {
         }
         sysRoleUserMapper.batchInsert(roleUserList);
     }
+
+    /**
+     * To save role_acl log, including adding, editing and deleting.
+     * @param roleId role id
+     * @param before the info before updating, may be null
+     * @param after the info after updating, may be null
+     */
+    private void saveRoleUserLog(int roleId, List<Integer> before, List<Integer> after) {
+
+        SysLogWithBLOBs sysLog = new SysLogWithBLOBs();
+
+        sysLog.setType(LogType.TYPE_ROLE_USER);
+        sysLog.setTargetId(roleId);
+        sysLog.setOldValue(before == null ? "" : JsonMapper.obj2String(before));
+        sysLog.setNewValue(after == null ? "" : JsonMapper.obj2String(after));
+        sysLog.setOperator(RequestHolder.getCurrentUser().getUsername());
+        sysLog.setOperateIp(IpUtil.getRemoteIp(RequestHolder.getCurrentRequest()));
+        sysLog.setOperateTime(new Date());
+        sysLog.setStatus(1);
+
+        sysLogMapper.insertSelective(sysLog);
+    }
+
 }

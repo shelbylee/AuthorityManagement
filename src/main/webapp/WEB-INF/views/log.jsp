@@ -49,7 +49,7 @@
                                 <input id="search-operator" type="search" name="operator" class="form-control input-sm" placeholder="操作者" aria-controls="dynamic-table">
                                 <input id="search-before" type="search" name="beforeSeg" class="form-control input-sm" placeholder="操作前的值" aria-controls="dynamic-table">
                                 <input id="search-after" type="search" name="afterSeg" class="form-control input-sm" placeholder="操作后的值" aria-controls="dynamic-table">
-                                <input id="search-from"type="search" name="fromTime" class="form-control input-sm" placeholder="开始时间" aria-controls="dynamic-table"> ~
+                                <input id="search-from" type="search" name="fromTime" class="form-control input-sm" placeholder="开始时间" aria-controls="dynamic-table"> ~
                                 <input id="search-to" type="search" name="toTime" class="form-control input-sm" placeholder="结束时间" aria-controls="dynamic-table">
                                 &nbsp;&nbsp;&nbsp;&nbsp;
                                 <button class="btn btn-info fa fa-check research" style="margin-bottom: 6px;" type="button">
@@ -124,7 +124,7 @@
 
             function loadLogList() {
                 var pageSize = $("#pageSize").val();
-                var pageNo = $("#logPage.pageNo").val() || 1;
+                var pageNo = $("#logPage .pageNo").val() || 1;
                 var url = "/sys/log/page.json";
                 var beforeSeg = $("#search-before").val();
                 var afterSeg = $("#search-after").val();
@@ -198,7 +198,13 @@
                     bindLogClick();
                     var pageSize = $("#pageSize").val();
                     var pageNo = $("#logPage .pageNo").val() || 1;
-                    renderPage(url, result.data.total, pageNo, pageSize, result.data.total > 0 ? result.data.data.length : 0, "logPage", renderLogListAndPage);
+                    renderPage(url,
+                        result.data.total,
+                        pageNo,
+                        pageSize,
+                        result.data.total > 0 ? result.data.data.length : 0,
+                        "logPage",
+                        renderLogListAndPage);
                 } else {
                     showMessage("获取权限操作历史列表", result.msg, false);
                 }
